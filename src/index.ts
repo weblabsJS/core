@@ -308,10 +308,10 @@ export function AppRouter(base_url: string, ...urlNodes: WeblabsURL[]) {
     return routerElement    
 }
 
-export function AppLink(base_url, ...data: any[]) {
+export function AppNavigator(base_url, ...data: any[]) {
     if ( base_url == window.location.pathname ) {
         //depends, like if the data was not same?
-        if ( data.length = 0 ) {
+        if ( data.length == 0 ) {
             return //if there is no data, means a static transition
         }
     }
@@ -323,4 +323,9 @@ export function AppLink(base_url, ...data: any[]) {
     //this event is used to say that the page was changed
     //wihtout really reloading the app entierely.
     //This is performant if you have no SSR requirements
+}
+
+export function AppLink(url, child: WebLabsElement, ...variables) {
+    return child.prop("style", "cursor: pointer")
+            .event("click", () => AppNavigator(url, ...variables))
 }
