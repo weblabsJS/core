@@ -4,7 +4,10 @@ tsc -p ./tsconfig.json
 rm ./dist/cdn.d.ts
 rm ./src/cdn.ts
 cp ./src/package.json ./dist
+cp README.md ./dist
 git add ./src/package.json
+git add build.sh
+git add README.md
 git commit -m "Updated package.json"
 git push
 cd dist && npm publish --access public
