@@ -1,6 +1,6 @@
 #cdn builder
-cbf = open("components.ts", "r")
-ibf = open("index.ts", "r")
+cbf = open("./src/components.ts", "r")
+ibf = open("./src/index.ts", "r")
 
 print("Reading index.ts and components.ts")
 
@@ -16,7 +16,7 @@ cdn = f"{index} {components}"
 
 print("Building CDN")
 
-cdbf = open("cdn.ts", "w")
+cdbf = open("./src/cdn.ts", "w")
 cdbf.write(cdn)
 
 cbf.close()
