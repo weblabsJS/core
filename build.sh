@@ -4,7 +4,7 @@ tsc -p ./tsconfig.json
 rm ./dist/cdn.d.ts
 rm ./src/cdn.ts
 cp ./src/package.json ./dist
-cp README.md ./dist
+cp README.MD ./dist
 git add ./src/package.json
 git add build.sh
 git add README.md
