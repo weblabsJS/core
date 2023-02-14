@@ -192,7 +192,7 @@ export function $(callback: Function, ...states: StatefulType[]) {
  
              //We need the HTML part, so instead of replacing the
              //node (which is very inefficient)
-             data.coreElement.innerHTML = callback().coreElement.outerHTML
+             data.coreElement = callback().coreElement
  
          })
      })
