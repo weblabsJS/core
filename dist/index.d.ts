@@ -4,15 +4,9 @@ export type state = {
     set: Function;
     onUpdate: Function;
     value: Function;
+    subscribe: (event: subscriptionEvent, callBack: Function) => void;
 };
-export type store = {
-    get: Function;
-    set: Function;
-    onUpdate: Function;
-    value: Function;
-    subscribe: Function;
-};
-export type StatefulType = state | store;
+export type StatefulType = state;
 export type subscriptionEvent = "set" | "get" | "onupdate";
 export declare class WebLabsElement {
     coreElement: HTMLElement;
@@ -24,8 +18,7 @@ export declare class WebLabsElement {
     ref(state: state): this;
     onRemove(callback: Function): this;
 }
-export declare function State<StateType>(initial?: StateType): state;
-export declare function Store<StoreType>(initial?: StoreType): store;
+export declare function State<StoreType>(initial?: StoreType): state;
 /**
   * New jquery-like definition for parts of UI
   * that changes due to change of state.

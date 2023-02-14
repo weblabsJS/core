@@ -51,31 +51,6 @@ export class WebLabsElement {
 export function State(initial) {
     var data = initial;
     var updateCandidates = [];
-    function get() {
-        return data;
-    }
-    function set(newstate) {
-        data = newstate;
-        updateCandidates.forEach(callback => callback());
-    }
-    function onUpdate(callback) {
-        updateCandidates.push(callback);
-    }
-    function value() {
-        return $(() => new WebLabsElement("span", `${get()}`), {
-            get, set, onUpdate, value
-        });
-    }
-    return {
-        get,
-        set,
-        onUpdate,
-        value
-    };
-}
-export function Store(initial) {
-    var data = initial;
-    var updateCandidates = [];
     var subscriptions = {
         get: [], set: [], onupdate: []
     };
@@ -84,8 +59,11 @@ export function Store(initial) {
         return data;
     }
     function set(newstore) {
-        subscriptions.set.forEach(callback => callback(data));
-        data = newstore;
+        subscriptions.set.forEach(callback => {
+            if (callback(data) == true) {
+                data = newstore;
+            }
+        });
         updateCandidates.forEach(callback => callback());
     }
     function onUpdate(callback) {
@@ -107,7 +85,7 @@ export function Store(initial) {
     }
     function value() {
         return $(() => new WebLabsElement("span", `${get()}`), {
-            get, set, onUpdate, value
+            get, set, onUpdate, value, subscribe
         });
     }
     return {
@@ -179,6 +157,7 @@ export function render(id, app) {
 export function Url(base_url, callback) {
     //the element to be called
     return {
+        //@ts-ignore
         url: base_url,
         callBack: callback
     };
@@ -191,11 +170,14 @@ export function AppRouter(base_url, ...urlNodes) {
     let currentPath = window.location.pathname;
     //update the path during initialization
     urlNodes.forEach(node => {
+        //@ts-ignore
         if (currentPath == `${base_url}${node.url}`) {
             if (window.history.state) {
+                //@ts-ignore
                 routerElement.coreElement.replaceChildren(node.callBack(...window.history.state.data).coreElement);
             }
             else {
+                //@ts-ignore
                 routerElement.coreElement.replaceChildren(node.callBack().coreElement);
             }
         }
@@ -205,11 +187,14 @@ export function AppRouter(base_url, ...urlNodes) {
     function CallBack() {
         //now do the same thing
         urlNodes.forEach(node => {
+            //@ts-ignore
             if (window.location.pathname == `${base_url}${node.url}`) {
                 if (window.history.state) {
+                    //@ts-ignore
                     routerElement.coreElement.replaceChildren(node.callBack(...window.history.state.data).coreElement);
                 }
                 else {
+                    //@ts-ignore
                     routerElement.coreElement.replaceChildren(node.callBack().coreElement);
                 }
             }
