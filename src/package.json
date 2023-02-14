@@ -1,0 +1,22 @@
+{
+  "name": "@weblabsjs/core",
+  "version": "0.0.6-alpha",
+  "description": "The core library of WebLabs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/weblabsJS/core.git"
+  },
+  "keywords": [
+    "WebLabs"
+  ],
+  "author": "Mayukh Chakraborty",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/weblabsJS/core/issues"
+  },
+  "homepage": "https://github.com/weblabsJS/core#readme"
+}
