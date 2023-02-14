@@ -115,6 +115,7 @@ export function State<StoreType>(initial?: StoreType): state {
     }
  
     function set(newstore?: StoreType) {
+
         subscriptions.set.forEach(callback => {
             if (callback(data) == true) {
                 data = newstore
@@ -125,7 +126,6 @@ export function State<StoreType>(initial?: StoreType): state {
             //there is no filtration involved
             data = newstore
         }
-
         updateCandidates.forEach(callback => callback())
     }
  
@@ -189,7 +189,17 @@ export function $(callback: Function, ...states: StatefulType[]) {
       */
     states.forEach((State: StatefulType) => {
          State.onUpdate(() => {
-            Object.assign(data.coreElement, callback().coreElement)
+ 
+            //We need the HTML part, so instead of replacing the
+            //node (which is very inefficient)
+
+            let tx = callback().coreElement
+            data.coreElement.replaceWith(
+                tx
+            )
+            
+            data.coreElement = tx
+
          })
      })
  
