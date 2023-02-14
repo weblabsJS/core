@@ -180,7 +180,7 @@ export function $(callback: Function, ...states: StatefulType[]) {
  
      //using the callback's UI definition instead of
      //creating a new one to improve space and performance
-    var data = callback()
+    var data: WebLabsElement = callback()
  
      /**
       * This one exploits the updateCandidates, since callbacks
@@ -189,11 +189,7 @@ export function $(callback: Function, ...states: StatefulType[]) {
       */
     states.forEach((State: StatefulType) => {
          State.onUpdate(() => {
- 
-             //We need the HTML part, so instead of replacing the
-             //node (which is very inefficient)
-             data.coreElement.innerHTML = callback().coreElement.innerHTML
- 
+            Object.assign(data.coreElement, callback().coreElement)
          })
      })
  
