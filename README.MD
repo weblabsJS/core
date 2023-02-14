@@ -2,6 +2,11 @@
 
 This repository contains the source code for the npm package `@weblabsjs/core`. It is a framework for building web applications, providing a set of essential components and tools to make development easier and faster.
 
+## Documentation
+
+Learn how weblabs works here:
+https://creatorlabs.gitbook.io/weblabs/getting-started/introduction
+
 ## Getting Started
 
 ### Prerequisites
