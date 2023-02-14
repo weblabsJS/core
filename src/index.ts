@@ -120,6 +120,12 @@ export function State<StoreType>(initial?: StoreType): state {
                 data = newstore
             }
         })
+
+        if ( subscriptions.set.length == 0 ) {
+            //there is no filtration involved
+            data = newstore
+        }
+
         updateCandidates.forEach(callback => callback())
     }
  
