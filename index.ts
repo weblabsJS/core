@@ -227,12 +227,12 @@ export function render(id: string, app: WebLabsElement) {
 }
 
 //@ts-ignore
-export type URL = {
+export type WeblabsURL = {
     url: string,
     callBack: Function
 }
 
-export function Url(base_url: string, callback: Function): URL {
+export function Url(base_url: string, callback: Function): WeblabsURL {
     //the element to be called
     return {
         //@ts-ignore
@@ -241,9 +241,9 @@ export function Url(base_url: string, callback: Function): URL {
     }
 }
 
-export function AppRouter(base_url: string, ...urlNodes: URL[]) {
+export function AppRouter(base_url: string, ...urlNodes: WeblabsURL[]) {
     //this is useful for many purposes
-    //the URLNodes are the functions that possess the URL data
+    //the URLNodes are the functions that possess the WeblabsURL data
     //return whatever the current url is.
     var routerElement = new WebLabsElement("div")
     let currentPath = window.location.pathname
