@@ -1,6 +1,6 @@
 {
   "name": "@weblabsjs/core",
-  "version": "0.0.8-alpha",
+  "version": "0.0.9-alpha",
   "description": "The core library of WebLabs",
   "main": "index.js",
   "scripts": {
