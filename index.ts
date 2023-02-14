@@ -25,18 +25,11 @@ export type state = {
     get: Function,
     set: Function,
     onUpdate: Function,
-    value: Function
-}
-
-export type store = {
-    get: Function,
-    set: Function,
-    onUpdate: Function,
     value: Function,
-    subscribe: Function
+    subscribe: (event: subscriptionEvent, callBack: Function) => void
 }
 
-export type StatefulType = state | store
+export type StatefulType = state
 
 export type subscriptionEvent = "set" | "get" | "onupdate"
  
@@ -104,41 +97,7 @@ export class WebLabsElement {
  
 }
 
-
-export function State<StateType>(initial?: StateType): state {
- 
-    var data: StateType | undefined = initial
-    var updateCandidates: Function[] = []
- 
-    function get(): StateType | undefined {
-        return data
-    }
- 
-    function set(newstate?: StateType) {
-        data = newstate
-        updateCandidates.forEach(callback => callback())
-    }
- 
-    function onUpdate(callback: Function) {
-        updateCandidates.push(callback)
-    }
-
-    function value() {
-        return $(() => new WebLabsElement("span", `${get()}`), {
-            get, set, onUpdate, value
-        })
-    }
-
-    return {
-        get,
-        set,
-        onUpdate,
-        value
-    }
- 
-}
-
-export function Store<StoreType>(initial?: StoreType): store {
+export function State<StoreType>(initial?: StoreType): state {
  
     var data: StoreType | undefined = initial
     var updateCandidates: Function[] = []
@@ -156,8 +115,11 @@ export function Store<StoreType>(initial?: StoreType): store {
     }
  
     function set(newstore?: StoreType) {
-        subscriptions.set.forEach(callback => callback(data))
-        data = newstore
+        subscriptions.set.forEach(callback => {
+            if (callback(data) == true) {
+                data = newstore
+            }
+        })
         updateCandidates.forEach(callback => callback())
     }
  
@@ -182,7 +144,7 @@ export function Store<StoreType>(initial?: StoreType): store {
 
     function value() {
         return $(() => new WebLabsElement("span", `${get()}`), {
-            get, set, onUpdate, value
+            get, set, onUpdate, value, subscribe
         })
     }
 
@@ -264,6 +226,7 @@ export function render(id: string, app: WebLabsElement) {
     }).observe(app.coreElement, { childList: true, subtree: true })
 }
 
+//@ts-ignore
 export type URL = {
     url: string,
     callBack: Function
@@ -272,6 +235,7 @@ export type URL = {
 export function Url(base_url: string, callback: Function): URL {
     //the element to be called
     return {
+        //@ts-ignore
         url: base_url,
         callBack: callback
     }
@@ -285,10 +249,13 @@ export function AppRouter(base_url: string, ...urlNodes: URL[]) {
     let currentPath = window.location.pathname
     //update the path during initialization
     urlNodes.forEach(node => {
+        //@ts-ignore
         if ( currentPath == `${base_url}${node.url}` ) {
             if ( window.history.state ) {
+                //@ts-ignore
                 routerElement.coreElement.replaceChildren(node.callBack(...window.history.state.data).coreElement)
             } else {
+                //@ts-ignore
                 routerElement.coreElement.replaceChildren(node.callBack().coreElement)
             }
         }
@@ -299,10 +266,13 @@ export function AppRouter(base_url: string, ...urlNodes: URL[]) {
     function CallBack() {
         //now do the same thing
         urlNodes.forEach(node => {
+            //@ts-ignore
             if ( window.location.pathname == `${base_url}${node.url}` ) {
                 if ( window.history.state ) {
+                    //@ts-ignore
                     routerElement.coreElement.replaceChildren(node.callBack(...window.history.state.data).coreElement)
                 } else {
+                    //@ts-ignore
                     routerElement.coreElement.replaceChildren(node.callBack().coreElement)
                 }
             }

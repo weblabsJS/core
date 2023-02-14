@@ -26,6 +26,18 @@ The source code for the framework can be found in the `src` folder.
 
 - The `dist` folder contains the final code that will be shipped to npmjs.
 
+## Building the code
+
+The source code can be built using the build.sh script. It requires
+Python3 and TSC (Typescript Compiler) pre-installed.
+
+Then use the following commands in the core directory:
+
+```java
+chmod +x build.sh //run this command only once to give script permission
+./build.sh
+```
+
 ## Contributing
 
 We welcome contributions to the framework! If you'd like to contribute, please read through our contribution guidelines to get started.
