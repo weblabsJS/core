@@ -308,7 +308,7 @@ export function AppRouter(base_url: string, ...urlNodes: WeblabsURL[]) {
     return routerElement    
 }
 
-export function AppNavigator(base_url, ...data: any[]) {
+export function AppLink(base_url, ...data: any[]) {
     if ( base_url == window.location.pathname ) {
         //depends, like if the data was not same?
         if ( data.length = 0 ) {
