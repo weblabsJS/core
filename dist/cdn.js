@@ -164,7 +164,7 @@ function Url(base_url, callback) {
 }
 function AppRouter(base_url, ...urlNodes) {
     //this is useful for many purposes
-    //the URLNodes are the functions that possess the URL data
+    //the URLNodes are the functions that possess the WeblabsURL data
     //return whatever the current url is.
     var routerElement = new WebLabsElement("div");
     let currentPath = window.location.pathname;

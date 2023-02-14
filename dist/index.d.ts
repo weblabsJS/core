@@ -34,10 +34,10 @@ export declare function $(callback: Function, ...states: StatefulType[]): any;
 export declare function When(condition: Boolean, if_true: WebLabsChild, if_false: WebLabsChild): WebLabsChild;
 export declare function onLoad(callback: Function, ...dependency: StatefulType[]): Promise<void>;
 export declare function render(id: string, app: WebLabsElement): void;
-export type URL = {
+export type WeblabsURL = {
     url: string;
     callBack: Function;
 };
-export declare function Url(base_url: string, callback: Function): URL;
-export declare function AppRouter(base_url: string, ...urlNodes: URL[]): WebLabsElement;
+export declare function Url(base_url: string, callback: Function): WeblabsURL;
+export declare function AppRouter(base_url: string, ...urlNodes: WeblabsURL[]): WebLabsElement;
 export declare function AppNavigator(base_url: any, ...data: any[]): void;
