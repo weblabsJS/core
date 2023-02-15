@@ -29,9 +29,7 @@ export type state = {
     subscribe: (event: subscriptionEvent, callBack: Function) => void
 }
 
-export type StatefulType = state
-
-export type subscriptionEvent = "set" | "get" | "onupdate"
+export type subscriptionEvent = "set" | "get" | "onupdate" | "value"
  
 export class WebLabsElement {
     coreElement: HTMLElement
@@ -104,9 +102,10 @@ export function State<StoreType>(initial?: StoreType): state {
     var subscriptions: {
         set: Function[],
         get: Function[],
-        onupdate: Function[]
+        onupdate: Function[],
+        value: Function[]
     } = {
-        get: [], set: [], onupdate: []
+        get: [], set: [], onupdate: [], value: []
     }
     
     function get(): StoreType | undefined {
@@ -145,10 +144,14 @@ export function State<StoreType>(initial?: StoreType): state {
             case "onupdate":
                 subscriptions.onupdate.push(callback)
                 break
+            case "value":
+                subscriptions.value.push(callback)
+                break
         }
     }
 
     function value() {
+        subscriptions.value.forEach(callback => callback(data))
         return $(() => new WebLabsElement("span", `${get()}`), {
             get, set, onUpdate, value, subscribe
         })
@@ -176,7 +179,7 @@ export function State<StoreType>(initial?: StoreType): state {
   * to create a performant app
 */
 
-export function $(callback: Function, ...states: StatefulType[]) {
+export function $(callback: Function, ...states: state[]) {
  
      //using the callback's UI definition instead of
      //creating a new one to improve space and performance
@@ -187,7 +190,7 @@ export function $(callback: Function, ...states: StatefulType[]) {
       * will be re-executed whenever the corresponding states
       * are updated
       */
-    states.forEach((State: StatefulType) => {
+    states.forEach((State: state) => {
          State.onUpdate(() => {
  
             //We need the HTML part, so instead of replacing the
@@ -214,7 +217,7 @@ export function When(condition: Boolean, if_true: WebLabsChild, if_false: WebLab
     }
 }
  
-export async function onLoad(callback: Function, ...dependency: StatefulType[]) {
+export async function onLoad(callback: Function, ...dependency: state[]) {
     callback()
     dependency.forEach(state => {
         state.onUpdate(callback)
@@ -300,7 +303,7 @@ export function AppRouter(base_url: string, ...urlNodes: WeblabsURL[]) {
     //now remove the event listner, when not in Need, because
     //ofcourse why would you even need when the component is out of scope
     //@ts-ignore
-    routerElement._bolt_remove_api = () => {
+    routerElement._WebLabs_remove_api = () => {
         window.removeEventListener("popstate", CallBack)
         window.removeEventListener("urlchange", CallBack)
     }
