@@ -30,7 +30,232 @@ export type state = {
 }
 
 export type subscriptionEvent = "set" | "get" | "onupdate" | "value"
- 
+
+export type HTMLTagProps = "accept"
+  | "acceptCharset"
+  | "accessKey"
+  | "action"
+  | "allowFullScreen"
+  | "allowTransparency"
+  | "alt"
+  | "async"
+  | "autocomplete"
+  | "autofocus"
+  | "autoPlay"
+  | "capture"
+  | "cellPadding"
+  | "cellSpacing"
+  | "challenge"
+  | "charSet"
+  | "checked"
+  | "cite"
+  | "class"
+  | "className"
+  | "cols"
+  | "colSpan"
+  | "content"
+  | "contentEditable"
+  | "contextMenu"
+  | "controls"
+  | "coords"
+  | "crossOrigin"
+  | "data"
+  | "dateTime"
+  | "default"
+  | "defer"
+  | "dir"
+  | "disabled"
+  | "download"
+  | "draggable"
+  | "dropzone"
+  | "enctype"
+  | "for"
+  | "form"
+  | "formAction"
+  | "formEncType"
+  | "formMethod"
+  | "formNoValidate"
+  | "formTarget"
+  | "frameBorder"
+  | "headers"
+  | "height"
+  | "hidden"
+  | "high"
+  | "href"
+  | "hrefLang"
+  | "htmlFor"
+  | "httpEquiv"
+  | "icon"
+  | "id"
+  | "inputMode"
+  | "integrity"
+  | "is"
+  | "itemId"
+  | "itemProp"
+  | "itemRef"
+  | "itemScope"
+  | "itemType"
+  | "kind"
+  | "label"
+  | "lang"
+  | "list"
+  | "loop"
+  | "low"
+  | "manifest"
+  | "marginHeight"
+  | "marginWidth"
+  | "max"
+  | "maxLength"
+  | "media"
+  | "mediaGroup"
+  | "method"
+  | "min"
+  | "minLength"
+  | "multiple"
+  | "muted"
+  | "name"
+  | "noValidate"
+  | "nonce"
+  | "open"
+  | "optimum"
+  | "pattern"
+  | "placeholder"
+  | "poster"
+  | "preload"
+  | "profile"
+  | "radioGroup"
+  | "readOnly"
+  | "referrerPolicy"
+  | "rel"
+  | "required"
+  | "reversed"
+  | "role"
+  | "rows"
+  | "rowSpan"
+  | "sandbox"
+  | "scope"
+  | "scoped"
+  | "scrolling"
+  | "seamless"
+  | "selected"
+  | "shape"
+  | "size"
+  | "sizes"
+  | "slot"
+  | "span"
+  | "spellcheck"
+  | "src"
+  | "srcdoc"
+  | "srclang"
+  | "srcSet"
+  | "start"
+  | "step"
+  | "style"
+  | "summary"
+  | "tabIndex"
+  | "target"
+  | "title"
+  | "type"
+  | "useMap"
+  | "value"
+  | "width"
+  | "wmode"
+  | "wrap";
+
+
+export type WeblabsEvent = "abort"
+  | "animationend"
+  | "animationiteration"
+  | "animationstart"
+  | "auxclick"
+  | "beforeinput"
+  | "blur"
+  | "cancel"
+  | "canplay"
+  | "canplaythrough"
+  | "change"
+  | "click"
+  | "close"
+  | "contextmenu"
+  | "copy"
+  | "cuechange"
+  | "cut"
+  | "dblclick"
+  | "drag"
+  | "dragend"
+  | "dragenter"
+  | "dragexit"
+  | "dragleave"
+  | "dragover"
+  | "dragstart"
+  | "drop"
+  | "durationchange"
+  | "emptied"
+  | "ended"
+  | "error"
+  | "focus"
+  | "focusin"
+  | "focusout"
+  | "fullscreenchange"
+  | "fullscreenerror"
+  | "gotpointercapture"
+  | "input"
+  | "invalid"
+  | "keydown"
+  | "keypress"
+  | "keyup"
+  | "load"
+  | "loadeddata"
+  | "loadedmetadata"
+  | "loadstart"
+  | "lostpointercapture"
+  | "mousedown"
+  | "mouseenter"
+  | "mouseleave"
+  | "mousemove"
+  | "mouseout"
+  | "mouseover"
+  | "mouseup"
+  | "pause"
+  | "play"
+  | "playing"
+  | "pointercancel"
+  | "pointerdown"
+  | "pointerenter"
+  | "pointerleave"
+  | "pointermove"
+  | "pointerout"
+  | "pointerover"
+  | "pointerup"
+  | "progress"
+  | "ratechange"
+  | "reset"
+  | "resize"
+  | "scroll"
+  | "securitypolicyviolation"
+  | "seeked"
+  | "seeking"
+  | "select"
+  | "selectionchange"
+  | "selectstart"
+  | "stalled"
+  | "submit"
+  | "suspend"
+  | "timeupdate"
+  | "toggle"
+  | "touchcancel"
+  | "touchend"
+  | "touchmove"
+  | "touchstart"
+  | "transitioncancel"
+  | "transitionend"
+  | "transitionrun"
+  | "transitionstart"
+  | "volumechange"
+  | "waiting"
+  | "wheel"
+
+
 export class WebLabsElement {
     coreElement: HTMLElement
     constructor(HTMLTag: string, ...children: WebLabsChild[]) {
@@ -67,13 +292,13 @@ export class WebLabsElement {
         return this
  
     }
- 
-    prop(name: string, value: string) {
+
+    prop(name: HTMLTagProps, value: string) {
         this.coreElement.setAttribute(name, value)
         return this
     }
  
-    event(name: string, callback: Function) {
+    event(name: WeblabsEvent, callback: Function) {
         this.coreElement.addEventListener(name, (e) => callback(e))
         return this
     }
@@ -95,9 +320,9 @@ export class WebLabsElement {
  
 }
 
-export function State<StoreType>(initial?: StoreType): state {
+export function State<StoreType>(initial: StoreType): state {
  
-    var data: StoreType | undefined = initial
+    var data: StoreType = initial
     var updateCandidates: Function[] = []
     var subscriptions: {
         set: Function[],
@@ -108,12 +333,12 @@ export function State<StoreType>(initial?: StoreType): state {
         get: [], set: [], onupdate: [], value: []
     }
     
-    function get(): StoreType | undefined {
+    function get(): StoreType {
         subscriptions.get.forEach(callback => callback(data))
         return data
     }
  
-    function set(newstore?: StoreType) {
+    function set(newstore: StoreType) {
 
         subscriptions.set.forEach(callback => {
             if (callback(data, newstore) == true) {
@@ -330,5 +555,5 @@ export function AppNavigator(base_url, ...data: any[]) {
 
 export function AppLink(url, child: WebLabsElement, ...variables) {
     return child.prop("style", "cursor: pointer")
-            .event("click", () => AppNavigator(url, ...variables))
+        .event("click", () => AppNavigator(url, ...variables))
 }
