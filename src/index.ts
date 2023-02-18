@@ -116,7 +116,7 @@ export function State<StoreType>(initial?: StoreType): state {
     function set(newstore?: StoreType) {
 
         subscriptions.set.forEach(callback => {
-            if (callback(data) == true) {
+            if (callback(data, newstore) == true) {
                 data = newstore
             }
         })
