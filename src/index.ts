@@ -285,7 +285,7 @@ export class WebLabsElement {
  
         classnames.forEach((classname: string) => {
             if ( classname != "" ) {
-                this.coreElement.classList.add(...classname.split(" "))
+                this.coreElement.classList.add(...classname.trim().split(" "))
             }
         })
  
