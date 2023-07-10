@@ -21,12 +21,22 @@
 // SOFTWARE.
 
 export type WebLabsChild = WebLabsElement | String | string | number
-export type state = {
+export type state<type> = {
     get: Function,
     set: Function,
     onUpdate: Function,
     value: Function,
-    subscribe: (event: subscriptionEvent, callBack: Function) => void
+    subscribe: (event: subscriptionEvent, callBack: (prev: type, newv: type) => boolean | StateModify<type> | void) => void
+}
+
+export type StateModify<value> = {
+    value: value
+}
+
+export function StateModify<value>(v: value): StateModify<value> {
+    return {
+        value: v
+    }
 }
 
 export type subscriptionEvent = "set" | "get" | "onupdate" | "value"
@@ -304,7 +314,7 @@ export class WebLabsElement {
     }
 
     //adding reference to itself (basically binding itself to a state)
-    ref(state: state) {
+    ref(state: state<any>) {
         state.set(this.coreElement)
         return this
     }
@@ -320,7 +330,7 @@ export class WebLabsElement {
  
 }
 
-export function State<StoreType>(initial: StoreType): state {
+export function State<StoreType>(initial: StoreType): state<StoreType> {
  
     var data: StoreType = initial
     var updateCandidates: Function[] = []
@@ -341,8 +351,15 @@ export function State<StoreType>(initial: StoreType): state {
     function set(newstore: StoreType) {
 
         subscriptions.set.forEach(callback => {
-            if (callback(data, newstore) == true) {
+            
+            let callbc = callback(data, newstore)
+            
+            if (callbc == true) {
                 data = newstore
+            } else if ( callbc != undefined ) {
+
+                if ( callbc.value != undefined ) data = callbc.value
+            
             }
         })
 
@@ -350,6 +367,7 @@ export function State<StoreType>(initial: StoreType): state {
             //there is no filtration involved
             data = newstore
         }
+
         updateCandidates.forEach(callback => callback())
     }
  
@@ -404,7 +422,7 @@ export function State<StoreType>(initial: StoreType): state {
   * to create a performant app
 */
 
-export function $(callback: Function, ...states: state[]) {
+export function $(callback: Function, ...states: state<any>[]) {
  
      //using the callback's UI definition instead of
      //creating a new one to improve space and performance
@@ -415,7 +433,7 @@ export function $(callback: Function, ...states: state[]) {
       * will be re-executed whenever the corresponding states
       * are updated
       */
-    states.forEach((State: state) => {
+    states.forEach((State: state<any>) => {
          State.onUpdate(() => {
  
             //We need the HTML part, so instead of replacing the
@@ -442,7 +460,7 @@ export function When(condition: Boolean, if_true: WebLabsChild, if_false: WebLab
     }
 }
  
-export async function onLoad(callback: Function, ...dependency: state[]) {
+export async function onLoad(callback: Function, ...dependency: state<any>[]) {
     callback()
     dependency.forEach(state => {
         state.onUpdate(callback)

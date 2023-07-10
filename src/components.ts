@@ -426,10 +426,6 @@ export function strong(...children: WebLabsChild[]): WebLabsElement {
     return new WebLabsElement("strong", ...children)
 }
 
-export function style(...children: WebLabsChild[]): WebLabsElement {
-    return new WebLabsElement("style", ...children)
-}
-
 export function sub(...children: WebLabsChild[]): WebLabsElement {
     return new WebLabsElement("sub", ...children)
 }
