@@ -22,10 +22,10 @@
 
 export type WebLabsChild = WebLabsElement | String | string | number
 export type state<type> = {
-    get: Function,
-    set: Function,
-    onUpdate: Function,
-    value: Function,
+    get: () => type,
+    set: (newstore: type) => void,
+    onUpdate: (callback: Function) => void,
+    value: () => void,
     subscribe: (event: subscriptionEvent, callBack: (prev: type, newv: type) => boolean | StateModify<type> | void) => void
 }
 
@@ -303,9 +303,44 @@ export class WebLabsElement {
  
     }
 
+    //new feature: dynamicClass
+    dynamicClass(name: HTMLTagProps, value: Function, dependency: state<string>) {
+
+        this.class(`${value()}`) //initially set the value
+
+        dependency.subscribe("set", (prev: string, newv: string) => {
+
+            //updates the previous value with the new one
+            this.coreElement.classList.replace(prev, newv)
+
+            return true
+
+        })
+
+        return this
+
+    }
+
     prop(name: HTMLTagProps, value: string) {
         this.coreElement.setAttribute(name, value)
         return this
+    }
+
+    //new feature: dynamicProp
+    dynamicProp<stateType>(name: HTMLTagProps, value: Function, dependency: state<stateType>) {
+
+        //call the value function and see any value that needs to be created
+        this.prop(name, value())
+
+        dependency.onUpdate(() => {
+
+            //when the dependency updates, update the same prop using the value function
+            this.prop(name, value())
+
+        })
+
+        return this
+
     }
  
     event(name: WeblabsEvent, callback: Function) {
