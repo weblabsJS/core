@@ -304,7 +304,7 @@ export class WebLabsElement {
     }
 
     //new feature: dynamicClass
-    dynamicClass(value: () => string, dependency: state<string>) {
+    dynamicClass<stateType>(value: () => string, dependency: state<stateType>) {
 
         let current = State<string>(value())
         this.coreElement.classList.add(current.get()) //initially set the value
