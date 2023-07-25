@@ -304,15 +304,16 @@ export class WebLabsElement {
     }
 
     //new feature: dynamicClass
-    dynamicClass(value: Function, dependency: state<string>) {
+    dynamicClass(value: () => string, dependency: state<string>) {
 
-        const current = value()
-        this.class(current) //initially set the value
+        let current = State<string>(value())
+        this.coreElement.classList.add(current.get()) //initially set the value
 
         dependency.onUpdate(() => {
 
             //updates the previous value with the new one
-            this.coreElement.classList.replace(current, value())
+            this.coreElement.classList.replace(current.get(), value())
+            current.set(value())
 
         })
 
