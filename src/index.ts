@@ -304,7 +304,7 @@ export class WebLabsElement {
     }
 
     //new feature: dynamicClass
-    dynamicClass(name: HTMLTagProps, value: Function, dependency: state<string>) {
+    dynamicClass(value: Function, dependency: state<string>) {
 
         this.class(`${value()}`) //initially set the value
 
