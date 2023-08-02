@@ -20,7 +20,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import { WebLabsElement, WebLabsChild, render } from './index'
+import { WebLabsElement, WebLabsChild } from './index'
+import { render } from './index'
 
 export function a(...children: WebLabsChild[]): WebLabsElement {
     return new WebLabsElement("a", ...children)
