@@ -599,6 +599,7 @@ export function DebugRender(id: string, app: () => WebLabsElement) {
 
 		).prop('style', `
 		
+            box-sizing: border-box;
 			height: 100vh;
 			width: 100%;
 			display: flex;
