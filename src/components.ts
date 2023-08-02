@@ -515,7 +515,7 @@ export function wbr(...children: WebLabsChild[]): WebLabsElement {
  * @description This function checks for errors in weblabs app and reports them to the main view. This function is unstable and should only be used during development.
  * @unstable 
  */
-function DebugRender(id: string, app: () => WebLabsElement) {
+export function DebugRender(id: string, app: () => WebLabsElement) {
 
 	function debugComponent(e: any) {
 
