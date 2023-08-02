@@ -510,102 +510,102 @@ export function wbr(...children: WebLabsChild[]): WebLabsElement {
     return new WebLabsElement("wbr", ...children)
 }
 
-/**
- * @function
- * @description This function checks for errors in weblabs app and reports them to the main view. This function is unstable and should only be used during development.
- * @unstable 
- */
-export function DebugRender(id: string, app: () => WebLabsElement) {
+// /**
+//  * @function
+//  * @description This function checks for errors in weblabs app and reports them to the main view. This function is unstable and should only be used during development.
+//  * @unstable 
+//  */
+// export function DebugRender(id: string, app: () => WebLabsElement) {
 
-	function debugComponent(e: any) {
+// 	function debugComponent(e: any) {
 
-		let trace = `${e.stack}`.split('\n')
-		trace.pop()
+// 		let trace = `${e.stack}`.split('\n')
+// 		trace.pop()
 
-		return div(
-			div(
-				div(
-					div().prop('style', `
+// 		return div(
+// 			div(
+// 				div(
+// 					div().prop('style', `
 					
-						background: #FF3131;
-						width: 20px;
-						height: 100%;
-						flex-shrink: 0;
+// 						background: #FF3131;
+// 						width: 20px;
+// 						height: 100%;
+// 						flex-shrink: 0;
 
-					`),
-					p(`${e}`)
+// 					`),
+// 					p(`${e}`)
 
-				).prop('style', `
+// 				).prop('style', `
 				
-					width: 100%;
-					height: 70px;
-					background: #282828;
-					display: flex;
-					gap: 20px;
-					font-size: 20px;
-					color: white;
-					align-items: center
+// 					width: 100%;
+// 					height: 70px;
+// 					background: #282828;
+// 					display: flex;
+// 					gap: 20px;
+// 					font-size: 20px;
+// 					color: white;
+// 					align-items: center
 				
-				`),
+// 				`),
 
-				p('Stack Trace').prop('style', 'padding: 0 20px;'),
+// 				p('Stack Trace').prop('style', 'padding: 0 20px;'),
 
-				div(
+// 				div(
 
-					div(
+// 					div(
 
-						...trace.map(line => p('at: ', span(line).prop('style', 'color: lime;')))
+// 						...trace.map(line => p('at: ', span(line).prop('style', 'color: lime;')))
 
-					).prop('style', 
-					`
-						background: #282828; 
-						height: 100%; 
-						width: 100%; 
-						display: flex; 
-						gap: 10px; 
-						padding: 10px; 
-						color: white; 
-						flex-direction: column;
-						overflow-y: scroll;
-					`) //stack trace message
+// 					).prop('style', 
+// 					`
+// 						background: #282828; 
+// 						height: 100%; 
+// 						width: 100%; 
+// 						display: flex; 
+// 						gap: 10px; 
+// 						padding: 10px; 
+// 						color: white; 
+// 						flex-direction: column;
+// 						overflow-y: scroll;
+// 					`) //stack trace message
 
-				).prop('style', `
+// 				).prop('style', `
 
-					padding: 0 20px;
-					width: 100%;
-					height: 237px;
+// 					padding: 0 20px;
+// 					width: 100%;
+// 					height: 237px;
 
-				`)
+// 				`)
 
-			).prop('style', `
+// 			).prop('style', `
 			
-				display: flex;
-				flex-direction: column;
-				gap: 20px;
-				width: 644px;
-				height: 390px;
-				background: #FFF;
-				box-shadow: 0px 4px 86px 0px rgba(0, 0, 0, 0.25);
+// 				display: flex;
+// 				flex-direction: column;
+// 				gap: 20px;
+// 				width: 644px;
+// 				height: 390px;
+// 				background: #FFF;
+// 				box-shadow: 0px 4px 86px 0px rgba(0, 0, 0, 0.25);
 				
-			`),
+// 			`),
 
-		).prop('style', `
+// 		).prop('style', `
 		
-			height: 100vh;
-			width: 100%;
-			display: flex;
-			justify-content: center;
-			align-items: center;
+// 			height: 100vh;
+// 			width: 100%;
+// 			display: flex;
+// 			justify-content: center;
+// 			align-items: center;
 
-		`)
-	}
+// 		`)
+// 	}
 
-	const message = State<string>("")
+// 	const message = State<string>("")
 
-	try {
-		render(id, app())
-	} catch (e) {
-		message.set(e)
-		render(id, $(() => debugComponent(message.get()), message))
-	}
-}
+// 	try {
+// 		render(id, app())
+// 	} catch (e) {
+// 		message.set(e)
+// 		render(id, $(() => debugComponent(message.get()), message))
+// 	}
+// }
