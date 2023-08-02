@@ -25,7 +25,7 @@ export type state<type> = {
     get: () => type,
     set: (newstore: type) => void,
     onUpdate: (callback: Function) => void,
-    value: () => void,
+    value: () => WebLabsElement,
     subscribe: (event: subscriptionEvent, callBack: (prev: type, newv: type) => boolean | StateModify<type> | void) => void
 }
 
@@ -265,7 +265,6 @@ export type WeblabsEvent = "abort"
   | "waiting"
   | "wheel"
 
-
 export class WebLabsElement {
     coreElement: HTMLElement
     constructor(HTMLTag: string, ...children: WebLabsChild[]) {
@@ -457,7 +456,7 @@ export function State<StoreType>(initial: StoreType): state<StoreType> {
   * to create a performant app
 */
 
-export function $(callback: Function, ...states: state<any>[]) {
+export function $(callback: () => WebLabsElement, ...states: state<any>[]) {
  
      //using the callback's UI definition instead of
      //creating a new one to improve space and performance
@@ -481,8 +480,8 @@ export function $(callback: Function, ...states: state<any>[]) {
             
             data.coreElement = tx
 
-         })
-     })
+        })
+    })
  
     return data
 }
