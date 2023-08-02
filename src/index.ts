@@ -535,6 +535,7 @@ export function DebugRender(id: string, app: () => WebLabsElement) {
 				new WebLabsElement("div",
 					new WebLabsElement("div").prop('style', `
 					
+                        box-sizing: border-box;
 						background: #FF3131;
 						width: 20px;
 						height: 100%;
@@ -543,8 +544,9 @@ export function DebugRender(id: string, app: () => WebLabsElement) {
 					`),
 					new WebLabsElement("p", `${e}`)
 
-				).prop('style', `
-				
+				).prop('style', 
+                `
+                    box-sizing: border-box;
 					width: 100%;
 					height: 70px;
 					background: #282828;
@@ -566,6 +568,7 @@ export function DebugRender(id: string, app: () => WebLabsElement) {
 
 					).prop('style', 
 					`
+                        box-sizing: border-box;
 						background: #282828; 
 						height: 100%; 
 						width: 100%; 
@@ -579,6 +582,7 @@ export function DebugRender(id: string, app: () => WebLabsElement) {
 
 				).prop('style', `
 
+                    box-sizing: border-box;
 					padding: 0 20px;
 					width: 100%;
 					height: 237px;
@@ -594,11 +598,12 @@ export function DebugRender(id: string, app: () => WebLabsElement) {
 				height: 390px;
 				background: #FFF;
 				box-shadow: 0px 4px 86px 0px rgba(0, 0, 0, 0.25);
+                box-sizing: border-box;
 				
 			`),
 
 		).prop('style', `
-		
+
             box-sizing: border-box;
 			height: 100vh;
 			width: 100%;
