@@ -24,8 +24,8 @@ export type WebLabsChild = WebLabsElement | String | string | number
 export type state<type> = {
     get: () => type,
     set: (newstore: type) => void,
-    onUpdate: (callback: Function) => void,
-    value: () => WebLabsElement,
+    registerEvent: <argType>(eventName: string, callback: (data: argType) => any) => void,
+    emitEvent: <argType>(eventName: string, args: argType) => void,
     subscribe: (event: subscriptionEvent, callBack: (prev: type, newv: type) => boolean | StateModify<type> | void) => void
 }
 
@@ -39,7 +39,7 @@ export function StateModify<value>(v: value): StateModify<value> {
     }
 }
 
-export type subscriptionEvent = "set" | "get" | "onupdate" | "value"
+export type subscriptionEvent = "set" | "set:after" | "get" | "onupdate" | "value"
 
 export type HTMLTagProps = "accept"
   | "acceptCharset"
@@ -308,7 +308,7 @@ export class WebLabsElement {
         let current = State<string>(value())
         this.coreElement.classList.add(current.get()) //initially set the value
 
-        dependency.onUpdate(() => {
+        dependency.subscribe("set:after", () => {
 
             //updates the previous value with the new one
             this.coreElement.classList.replace(current.get(), value())
@@ -331,7 +331,7 @@ export class WebLabsElement {
         //call the value function and see any value that needs to be created
         this.prop(name, value())
 
-        dependency.onUpdate(() => {
+        dependency.subscribe("set:after", () => {
 
             //when the dependency updates, update the same prop using the value function
             this.prop(name, value())
@@ -370,11 +370,9 @@ export function State<StoreType>(initial: StoreType): state<StoreType> {
     var updateCandidates: Function[] = []
     var subscriptions: {
         set: Function[],
-        get: Function[],
-        onupdate: Function[],
-        value: Function[]
+        get: Function[]
     } = {
-        get: [], set: [], onupdate: [], value: []
+        get: [], set: []
     }
     
     function get(): StoreType {
@@ -394,6 +392,8 @@ export function State<StoreType>(initial: StoreType): state<StoreType> {
 
                 if ( callbc.value != undefined ) data = callbc.value
             
+            } else if ( callbc != false ) {
+                data = newstore
             }
         })
 
@@ -404,42 +404,42 @@ export function State<StoreType>(initial: StoreType): state<StoreType> {
 
         updateCandidates.forEach(callback => callback())
     }
- 
-    function onUpdate(callback: Function) {
-        subscriptions.onupdate.forEach(callback => callback(data))
-        updateCandidates.push(callback)
-    }
 
-    function subscribe(event: subscriptionEvent, callback: Function) {
+
+    function subscribe(event: subscriptionEvent | string, callback: Function) {
         switch(event) {
             case "get":
                 subscriptions.get.push(callback)
                 break
+            case "set:after":
+                updateCandidates.push(callback)
+                break
             case "set":
                 subscriptions.set.push(callback)
-                break
-            case "onupdate":
-                subscriptions.onupdate.push(callback)
-                break
-            case "value":
-                subscriptions.value.push(callback)
                 break
         }
     }
 
-    function value() {
-        subscriptions.value.forEach(callback => callback(data))
-        return $(() => new WebLabsElement("span", `${get()}`), {
-            get, set, onUpdate, value, subscribe
-        })
+    function registerEvent<type>(eventName: string, callback: (data: type) => any) {
+        
+        //a singular function as opposed to multiple functions
+        subscriptions[eventName] = callback
+
+    }
+
+    function emitEvent<type>(eventName: string, args: type | undefined) {
+
+        subscriptions[eventName](args) //simply call the custom event with
+        //the request arguments
+
     }
 
     return {
         get,
         set,
-        onUpdate,
-        value,
-        subscribe
+        subscribe,
+        registerEvent,
+        emitEvent
     }
  
 }
@@ -468,7 +468,7 @@ export function $(callback: () => WebLabsElement, ...states: state<any>[]) {
       * are updated
       */
     states.forEach((State: state<any>) => {
-         State.onUpdate(() => {
+         State.subscribe("set:after", () => {
  
             //We need the HTML part, so instead of replacing the
             //node (which is very inefficient)
@@ -497,7 +497,7 @@ export function When(condition: Boolean, if_true: WebLabsChild, if_false: WebLab
 export async function onLoad(callback: Function, ...dependency: state<any>[]) {
     callback()
     dependency.forEach(state => {
-        state.onUpdate(callback)
+        state.subscribe("set:after", () => {callback})
     })
 }
  
@@ -524,104 +524,80 @@ export function render(id: string, app: WebLabsElement) {
  * @unstable 
  */
 export function DebugRender(id: string, app: () => WebLabsElement) {
-
-	function debugComponent(e) {
-
-		let trace = `${e.stack}`.split('\n')
-		trace.pop()
-
-		return new WebLabsElement("div",
-			new WebLabsElement("div",
-				new WebLabsElement("div",
-					new WebLabsElement("div").prop('style', `
-					
+    function debugComponent(e) {
+        let trace = `${e.stack}`.split('\n');
+        trace.pop();
+        return new WebLabsElement("div",
+            new WebLabsElement("div",
+                new WebLabsElement("div",
+                    new WebLabsElement("div").prop('style', `
                         box-sizing: border-box;
-						background: #FF3131;
-						width: 20px;
-						height: 100%;
-						flex-shrink: 0;
-
-					`),
-					new WebLabsElement("p", `${e}`)
-
-				).prop('style', 
-                `
+                        background: #FF3131;
+                        width: 20px;
+                        height: 100%;
+                        flex-shrink: 0;
+                    `),
+                    new WebLabsElement("p", `${e}`)
+                ).prop('style', `
                     box-sizing: border-box;
-					width: 100%;
-					height: 70px;
-					background: #282828;
-					display: flex;
-					gap: 20px;
-					font-size: 20px;
-					color: white;
-					align-items: center
-				
-				`),
-
-				new WebLabsElement("p", 'Stack Trace').prop('style', 'padding: 0 20px;'),
-
-				new WebLabsElement("div",
-
-					new WebLabsElement("div",
-
-						...trace.map(line => new WebLabsElement("div", 'at: ', new WebLabsElement("span", line).prop('style', 'color: lime;')))
-
-					).prop('style', 
-					`
+                    width: 100%;
+                    height: 70px;
+                    background: #282828;
+                    display: flex;
+                    gap: 20px;
+                    font-size: 20px;
+                    color: white;
+                    align-items: center;
+                `),
+                new WebLabsElement("p", 'Stack Trace').prop('style', 'padding: 0 20px; margin: 0px'),
+                new WebLabsElement("div",
+                    new WebLabsElement("div",
+                        ...trace.map(line => new WebLabsElement("div", 'at: ', new WebLabsElement("span", line).prop('style', 'color: lime;')))
+                    ).prop('style', `
                         box-sizing: border-box;
-						background: #282828; 
-						height: 100%; 
-						width: 100%; 
-						display: flex; 
-						gap: 10px; 
-						padding: 10px; 
-						color: white; 
-						flex-direction: column;
-						overflow-y: scroll;
-					`) //stack trace message
-
-				).prop('style', `
-
+                        background: #282828;
+                        height: 100%;
+                        width: 100%;
+                        display: flex;
+                        gap: 10px;
+                        padding: 10px;
+                        color: white;
+                        flex-direction: column;
+                        overflow-y: scroll;
+                    `) //stack trace message
+                ).prop('style', `
                     box-sizing: border-box;
-					padding: 0 20px;
-					width: 100%;
-					height: 237px;
-
-				`)
-
-			).prop('style', `
-			
-				display: flex;
-				flex-direction: column;
-				gap: 20px;
-				width: 644px;
-				height: 390px;
-				background: #FFF;
-				box-shadow: 0px 4px 86px 0px rgba(0, 0, 0, 0.25);
+                    padding: 0 20px;
+                    width: 100%;
+                    height: 237px;
+                `)
+            ).prop('style', `
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+                width: 644px;
+                padding-bottom: 20px;
+                background: #FFF;
+                box-shadow: 0px 4px 86px 0px rgba(0, 0, 0, 0.25);
                 box-sizing: border-box;
-				
-			`),
-
-		).prop('style', `
-
+            `),
+        ).prop('style', `
+            font-family: sans-serif;
             box-sizing: border-box;
-			height: 100vh;
-			width: 100%;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-
-		`)
-	}
-
-	const message = State<string>("")
-
-	try {
-		render(id, app())
-	} catch (e) {
-		message.set(e)
-		render(id, $(() => debugComponent(message.get()), message))
-	}
+            height: 100vh;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        `);
+    }
+    const message = State<string>("");
+    try {
+        render(id, app());
+    } catch (e) {
+        message.set(e);
+        render(id, $(() => debugComponent(message.get()), message));
+    }
 }
 
 //@ts-ignore
@@ -694,7 +670,7 @@ export function AppRouter(base_url: string, ...urlNodes: WeblabsURL[]) {
     return routerElement    
 }
 
-export function AppNavigator(base_url, ...data: any[]) {
+export function AppNavigator(base_url: string, ...data: any[]) {
     if ( base_url == window.location.pathname ) {
         //depends, like if the data was not same?
         if ( data.length == 0 ) {
@@ -711,7 +687,7 @@ export function AppNavigator(base_url, ...data: any[]) {
     //This is performant if you have no SSR requirements
 }
 
-export function AppLink(url, child: WebLabsElement, ...variables) {
+export function AppLink(url: string, child: WebLabsElement, ...variables) {
     return child.prop("style", "cursor: pointer")
         .event("click", () => AppNavigator(url, ...variables))
 }
