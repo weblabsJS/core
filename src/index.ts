@@ -26,7 +26,15 @@ export type state<type> = {
     set: (newstore: type) => void,
     registerEvent: <argType>(eventName: string, callback: (data: argType) => any) => void,
     emitEvent: <argType>(eventName: string, args: argType) => void,
-    subscribe: (event: subscriptionEvent, callBack: (prev: type, newv: type) => boolean | StateModify<type> | void) => void
+    subscribe: <Event extends subscriptionEvent>(
+        event: Event, 
+        callBack: 
+            Event extends "set" ? (prev: type, newv: type) => boolean | StateModify<type> | void :
+            Event extends "set:after" ? (value: type) => void :
+            Event extends "set:only" ? (value: type) => void :
+            Event extends "get"? (value: type) => StateModify<type> | void :
+            never
+    ) => void
 }
 
 export type StateModify<value> = {
@@ -39,7 +47,7 @@ export function StateModify<value>(v: value): StateModify<value> {
     }
 }
 
-export type subscriptionEvent = "set" | "set:after" | "get" | "onupdate" | "value"
+export type subscriptionEvent = "set" | "set:after" | "set:only" | "get";
 
 export type HTMLTagProps = "accept"
   | "acceptCharset"
@@ -369,53 +377,92 @@ export function State<StoreType>(initial: StoreType): state<StoreType> {
     var data: StoreType = initial
     var updateCandidates: Function[] = []
     var subscriptions: {
-        set: Function[],
-        get: Function[]
+        set: (prev: StoreType, newv: StoreType) => boolean | StateModify<StoreType> | void,
+        get: (value: StoreType) => StateModify<StoreType> | undefined,
+        only: Function[]
     } = {
-        get: [], set: []
+        get: undefined,
+        set: undefined,
+        only: []
     }
     
     function get(): StoreType {
-        subscriptions.get.forEach(callback => callback(data))
+        //the get function will call each function as a series,
+        //where the value is passed to the next value
+
+        if ( subscriptions.get != undefined ) {
+            const callbc: StateModify<StoreType> = subscriptions.get(data)
+                
+            if ( callbc != undefined ) {
+
+                if ( callbc.value != undefined ) {
+
+                    return callbc.value
+
+                }
+
+            }
+        }
+  
         return data
     }
  
     function set(newstore: StoreType) {
 
-        subscriptions.set.forEach(callback => {
+        if ( subscriptions.set != undefined ) {
+
+            let callbc = subscriptions.set(data, newstore)
             
-            let callbc = callback(data, newstore)
-            
-            if (callbc == true) {
+            if (callbc == true ) {
+    
                 data = newstore
+                subscriptions.only.forEach(callback => callback())
+    
             } else if ( callbc != undefined ) {
-
+    
+                //@ts-ignore
                 if ( callbc.value != undefined ) data = callbc.value
-            
-            } else if ( callbc != false ) {
-                data = newstore
-            }
-        })
+    
+            } else {
 
-        if ( subscriptions.set.length == 0 ) {
+                data = newstore
+
+            }
+
+        }
+
+        if ( subscriptions.set == undefined) {
             //there is no filtration involved
             data = newstore
+            subscriptions.only.forEach(callback => callback(data))
         }
 
         updateCandidates.forEach(callback => callback())
     }
 
 
-    function subscribe(event: subscriptionEvent | string, callback: Function) {
+    function subscribe<Event extends subscriptionEvent>(
+        event: Event | string, 
+        callback: 
+            Event extends "set" ? (prev: StoreType, newv: StoreType) => boolean | StateModify<StoreType> | void :
+            Event extends "set:after" ? (value: StoreType) => void :
+            Event extends "set:only" ? (value: StoreType) => void :
+            Event extends "get"? (value: StoreType) => StateModify<StoreType> | undefined :
+            never
+        ) {
         switch(event) {
             case "get":
-                subscriptions.get.push(callback)
+                //@ts-ignore
+                subscriptions.get = callback
                 break
             case "set:after":
                 updateCandidates.push(callback)
                 break
+            case "set:only":
+                subscriptions.only.push(callback)
+                break
             case "set":
-                subscriptions.set.push(callback)
+                subscriptions.set = callback
                 break
         }
     }
