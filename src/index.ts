@@ -22,12 +22,12 @@
 
 export type WebLabsChild = WebLabsElement | String | string | number
 export type state<type> = {
-    get: () => type,
+    get: (arg?: { filter?: boolean }) => type,
     set: (newstore: type) => void,
     registerEvent: <argType>(eventName: string, callback: (data: argType) => any) => void,
     emitEvent: <argType>(eventName: string, args: argType) => void,
     subscribe: <Event extends subscriptionEvent>(
-        event: Event, 
+        event: Event,
         callBack: 
             Event extends "set" ? (prev: type, newv: type) => boolean | StateModify<type> | void :
             Event extends "set:after" ? (value: type) => void :
@@ -386,21 +386,23 @@ export function State<StoreType>(initial: StoreType): state<StoreType> {
         only: []
     }
     
-    function get(): StoreType {
+    function get(arg?: { filter?: boolean }): StoreType {
         //the get function will call each function as a series,
         //where the value is passed to the next value
 
-        if ( subscriptions.get != undefined ) {
-            const callbc: StateModify<StoreType> = subscriptions.get(data)
-                
-            if ( callbc != undefined ) {
-
-                if ( callbc.value != undefined ) {
-
-                    return callbc.value
-
+        if ( arg != undefined && arg.filter == true ) {
+            if ( subscriptions.get != undefined ) {
+                const callbc: StateModify<StoreType> = subscriptions.get(data)
+                    
+                if ( callbc != undefined ) {
+    
+                    if ( callbc.value != undefined ) {
+    
+                        return callbc.value
+    
+                    }
+    
                 }
-
             }
         }
   
@@ -423,10 +425,13 @@ export function State<StoreType>(initial: StoreType): state<StoreType> {
                 //@ts-ignore
                 if ( callbc.value != undefined ) data = callbc.value
     
+            } else if ( callbc == false ) {
+
+                return
+
             } else {
-
                 data = newstore
-
+                subscriptions.only.forEach(callback => callback())
             }
 
         }
