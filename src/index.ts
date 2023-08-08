@@ -538,7 +538,7 @@ export function $(callback: () => WebLabsElement, ...states: state<any>[]) {
     return data
 }
  
-export function When(condition: Boolean, if_true: WebLabsChild, if_false: WebLabsChild) {
+export function When(condition: Boolean, if_true: WebLabsElement, if_false: WebLabsElement) {
     if ( condition ) {
         return if_true
     } else {
@@ -667,7 +667,7 @@ export function Url(base_url: string, callback: Function): WeblabsURL {
     }
 }
 
-export function AppRouter(base_url: string, ...urlNodes: WeblabsURL[]) {
+export function AppRouter(base_url: string, ...urlNodes: WeblabsURL[]): WebLabsElement {
     //this is useful for many purposes
     //the URLNodes are the functions that possess the WeblabsURL data
     //return whatever the current url is.
