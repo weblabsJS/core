@@ -418,7 +418,7 @@ export function State<StoreType>(initial: StoreType): state<StoreType> {
             if (callbc == true ) {
     
                 data = newstore
-                subscriptions.only.forEach(callback => callback())
+                subscriptions.only.forEach(callback => callback(data))
     
             } else if ( callbc != undefined ) {
     
@@ -431,7 +431,7 @@ export function State<StoreType>(initial: StoreType): state<StoreType> {
 
             } else {
                 data = newstore
-                subscriptions.only.forEach(callback => callback())
+                subscriptions.only.forEach(callback => callback(data))
             }
 
         }
@@ -442,7 +442,7 @@ export function State<StoreType>(initial: StoreType): state<StoreType> {
             subscriptions.only.forEach(callback => callback(data))
         }
 
-        updateCandidates.forEach(callback => callback())
+        updateCandidates.forEach(callback => callback(data))
     }
 
 
