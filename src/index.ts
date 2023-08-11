@@ -356,8 +356,8 @@ export class WebLabsElement {
     }
 
     //adding reference to itself (basically binding itself to a state)
-    ref(state: state<any>) {
-        state.set(this.coreElement)
+    ref(state: state<WebLabsChild>) {
+        state.set(this)
         return this
     }
  
