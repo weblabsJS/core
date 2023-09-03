@@ -1,4 +1,5 @@
-import { WebLabsElement, State, render, $} from "./index";
+import { div } from "./components";
+import { WebLabsElement, State, render, $, state, WebLabsChild, WeblabsEvent} from "./index";
 
 /**
  * @function

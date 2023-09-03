@@ -20,7 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-export type WebLabsChild = WebLabsElement | String | string | number
+export type WebLabsChild = WebLabsElement | string | number
 export type state<type> = {
     get: (arg?: { filter?: boolean }) => type,
     set: (newstore: type) => void,
